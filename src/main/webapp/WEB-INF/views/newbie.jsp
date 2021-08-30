@@ -7,7 +7,7 @@
 <title>회원가입</title>
 </head>
 <body>
-<form method="POST" action="home">
+<form method="POST" action="/">
 	이름 : <input type=text name=realname><br>
 	아이디 : <input type=text name=userid><br>
 	비밀번호 : <input type=password name=passcode1><br>
@@ -15,6 +15,6 @@
 	모바일 번호 : <input type=text name=mobile><br>
 	<input type=submit value="등록">
 </form>	
-	<button value="취소" onclick="location.href='/home'">취소</button>
+	<button value="취소" onclick="location.href='/'">취소</button>
 </body>
 </html>

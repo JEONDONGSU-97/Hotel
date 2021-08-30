@@ -11,7 +11,7 @@
 	비밀번호 : <input type=password name=userpassword placeholder="비밀번호를 입력하세요."><br>
 	<input type=submit value="로그인">
 </form>
-	<button value="취소" onclick="location.href='/home'">취소</button>
+	<button value="취소" onclick="location.href='/'">취소</button>
 	<button value="회원가입" onclick="location.href='/newbie'">회원가입</button>
 </body>
 </html>

@@ -12,7 +12,7 @@
 	<div id="hotel_reservation_all">
     <header>
       <a href="/logout"><p>로그아웃</p></a>
-      <a href="/room" id="room_management">객실관리</a>
+      <a href="room" id="room_management">객실관리</a>
       <p>예약관리</p>
     </header>
     <main>

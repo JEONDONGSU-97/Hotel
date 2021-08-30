@@ -1,14 +1,17 @@
 package com.hotel.app;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class HomeController {
 	private HttpSession session;
+	@Autowired
+	private SqlSession sqlSession;
 //	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 //	
 //	/**
@@ -52,6 +57,7 @@ public class HomeController {
 		String userid=hsr.getParameter("userid");
 		String passcode=hsr.getParameter("userpassword");
 		
+		// DB에서 유저확인 : 기존유저면 booking, 없으면 home으로.
 		session=hsr.getSession(); // session을 사용가능하게 만든다.(메소드 쓸때마다 1번씩 사용해야한다.)
 		session.setAttribute("loginid", userid);
 		session.setAttribute("loginpw", passcode);
@@ -66,32 +72,34 @@ public class HomeController {
 		if(loginid.equals("jds")&&loginpw.equals("1234")) {
 			return "booking"; // JSP 파일 이름
 		} else {
-			return "redirect:/home";
+			return "redirect:/";
 		}
 		
 	}
 	@RequestMapping(value="/room")
-	public String room(HttpServletRequest hsr) {
+	public String room(HttpServletRequest hsr,Model model) {
 		session=hsr.getSession();
 		if(session.getAttribute("loginid")==null) {
-			return "redirect:/home";
+			return "redirect:/";
 		}
+		// 여기서 interface호출하고 결과를 room.jsp에 전달.
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		ArrayList<Roominfo> roominfo = room.getRoomList();
+		model.addAttribute("list", roominfo);
+		System.out.println(roominfo);
 		return "room";
 	}
 	@RequestMapping(value="/logout")
 	public String logout(HttpServletRequest hsr) {
 		session=hsr.getSession();
 		session.invalidate();
-		return "redirect:/home";
+		return "redirect:/";
 	}
 	@RequestMapping(value="/")
 	public String doMain() {
 		return "home";
 	}
-	@RequestMapping(value="/home")
-	public String doHome() {
-		return "home";
-	}
+
 	@RequestMapping(value="/login")
 	public String doLogin() {
 		return "login";
