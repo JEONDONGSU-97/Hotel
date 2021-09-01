@@ -2,9 +2,24 @@
 <!DOCTYPE mapper
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EX"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-	
+
+<!-- namespace="인터페이스의 경로명+이름" -->	
 <mapper namespace="com.hotel.app.iRoom">
+	<!-- select id="인터페이스의 메소드" resultType="인터페이스의 반환데이터타입" -->
 	<select id="getRoomList" resultType="com.hotel.app.Roominfo">
-		select roomcode,name,type,howmany,howmuch from room order by name
+		<!-- sql문(이게 인터페이스의 메소드 구현내용이다) -->
+		select a.roomcode, a.name roomname, b.name typename, a.howmany,a.howmuch
+  		from room a, roomtype b
+		where a.roomcode=b.typecode
+		order by roomname
 	</select>
+	
+	<select id="getRoomType" resultType="com.hotel.app.Roomtype">
+		<!-- sql문(이게 인터페이스의 메소드 구현내용이다) -->
+		select a.name, a.typecode
+		from roomtype a
+		order by typecode
+	</select>
+
 </mapper>
+

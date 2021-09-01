@@ -15,14 +15,10 @@
       <a href="/logout"><p>로그아웃</p></a>
       <p>객실관리</p>
       <a href="/booking" id="hotel_reservation">예약관리</a><br>
-      <select size=10 style='width:250px;'>
-      <c:forEach items="${list}" var="room">
-      	<option>
-      		${room.roomcode},${room.name},${room.type},${room.howmany},${room.howmuch}
-      	</option>
-      </c:forEach>
-      </select>
+     
     </header>
+
+	
 
     <main>
       <div id="hotel_room_list_left">
@@ -30,13 +26,9 @@
           <h3>객실목록</h3>
           <p>
             <select size=5 name="room_list" id="room_list" style="width: 300px; height: 500px;">
-              <option value="">대한민국 Suite Room</option>
-              <option value="">프랑스 Suite Room</option>
-              <option value="">베트남 Single Room</option>
-              <option value="">뉴질랜드 Connection Room</option>
-              <option value="">독일 Triple Room</option>
-              <option value="">네덜란드 Domitory</option>
-              <option value="">미국 Family Room</option>
+	           	<c:forEach items="${list}" var="room">
+		      	<option value="${room.roomcode}">${room.roomname},${room.typename},${room.howmany},${room.howmuch}</option>	      	
+	    		</c:forEach>  
             </select>
           </p>
         </section>
@@ -45,35 +37,24 @@
       <div id="hotel_room_list_right">
         <section class="room2" id="hotel_room_list_right2">
           <h3>객실이름</h3>
-          <input type="text" id="room_name">
+          <input type="text" id="room_name"><input type="hidden" id="room_code">
           <h3>객실종류</h3>
-          <select name="" id="room_type">
-            <option value="">Domitory</option>
-            <option value="">Single Room</option>
-            <option value="">Double Room</option>
-            <option value="">Triple Room</option>
-            <option value="">Suite Room</option>
-            <option value="">Family Room</option>
-            <option value="">Connection Room</option>
-          </select>
-          <input type="submit" id="" value="선택">
+		  <p>
+            <select size=5 name="room_list" id="room_type" style="width: 300px; height: 120px;">
+	           	<c:forEach items="${roomtype}" var="type">
+		      	<option value="${type.typecode}">${type.name}</option>
+	    		</c:forEach>  
+            </select>
+          </p>
+
           <h3>숙박가능 인원</h3>
-          <select name="" id="number_of_capacity" style="width: 100px;">
-            <option value="">1명</option>
-            <option value="">2명</option>
-            <option value="">3명</option>
-            <option value="">4명</option>
-            <option value="">5명</option>
-            <option value="">6명</option>
-            <option value="">7명</option>
-            <option value="">8명</option>
-          </select>
+		  <input type="text" id="number_of_capacity">
           <h3>1박 요금</h3>
           <input type="text" id="one_night_rate_room" size="15px">원
           <p>
-            <input type="submit" value="등록">
-            <input type="submit" value="삭제">
-            <input type="submit" value="clear">
+            <input type="button" value="등록" id="btnAdd">&nbsp;
+            <input type="button" value="삭제" id="btnDelete">&nbsp;
+            <input type="button" value="취소" id="btnEmpty">
           </p>
         </section>
       </div>
@@ -85,4 +66,45 @@
     </footer>
   </div> 
 </body>
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script>
+$(document)
+.ready(function(){
+	$.post("http://localhost:8080/getRoomList",{},function(result){
+		console.log(result);//result는 제이슨 데이터를 받기위함.
+	},'json');
+})
+.on('click','#room_list',function(){
+	var str = $('#room_list option:selected').text(); // option 값 가져오기
+	var str1 = $('#room_list').val(); // value에서 typecode 가져오기
+	var pk = String(str1).split(" "); // typecode를 가져오기 위해 split
+	var typecode = parseInt(pk[0]); // int로 타입변환
+	var room = String(str).split(','); // option에서 가져온 값들 배열로 슬라이싱
+	
+	var roomname = room[0]
+	var roomtype = room[1]
+	var howmany = room[2]
+	var howmuch = room[3]
+	
+	$('#room_name').val(roomname); // input은 value로 화면출력
+	$('#number_of_capacity').val(howmany);
+	$('#one_night_rate_room').val(howmuch);
+	
+	if(typecode==1){
+		$('#room_type').val(1).prop("selected", true);
+	}else if(typecode==2){
+		$('#room_type').val(2).prop("selected", true);
+	}else if(typecode==3){
+		$('#room_type').val(3).prop("selected", true);
+	}else if(typecode==4){
+		$('#room_type').val(4).prop("selected", true);
+	}
+	let code = $(this).val();
+	$('#room_code').val(code);
+})
+.on('click','#btnEmpty',function(){
+	$('#room_name,#number_of_capacity,#one_night_rate_room').val('');
+	$('#room_type option:selected').prop("selected", false);
+})
+</script>
 </html>
