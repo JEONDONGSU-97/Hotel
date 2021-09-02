@@ -6,14 +6,16 @@ public class Roominfo {
 	private String typename;
 	private int howmany;
 	private int howmuch;
+	private int typecode;
 	public Roominfo() {
 	}
-	public Roominfo(int roomcode, String roomname, String typename, int howmany, int howmuch) {
+	public Roominfo(int roomcode, String roomname, String typename, int howmany, int howmuch, int typecode) {
 		this.roomcode = roomcode;
 		this.roomname = roomname;
 		this.typename = typename;
 		this.howmany = howmany;
 		this.howmuch = howmuch;
+		this.typecode = typecode;
 	}
 	public int getRoomcode() {
 		return roomcode;
@@ -45,5 +47,12 @@ public class Roominfo {
 	public void setHowmuch(int howmuch) {
 		this.howmuch = howmuch;
 	}
+	public int getTypecode() {
+		return typecode;
+	}
+	public void setTypecode(int typecode) {
+		this.typecode = typecode;
+	}
+	
 
 }

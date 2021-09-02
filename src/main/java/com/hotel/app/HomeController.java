@@ -114,6 +114,7 @@ public class HomeController {
 			jo.put("typename", roominfo.get(i).getTypename());
 			jo.put("howmany", roominfo.get(i).getHowmany());
 			jo.put("howmuch", roominfo.get(i).getHowmuch());
+			jo.put("typecode", roominfo.get(i).getTypecode());
 			ja.add(jo);
 		}
 		return ja.toString();
@@ -132,11 +133,23 @@ public class HomeController {
 	@ResponseBody
 	public String addRoom(HttpServletRequest hsr) {
 		String rname = hsr.getParameter("roomname");
-		String rtype = hsr.getParameter("roomtype");
+		int rtype = Integer.parseInt(hsr.getParameter("roomtype"));
 		int howmany = Integer.parseInt(hsr.getParameter("howmany"));
 		int howmuch = Integer.parseInt(hsr.getParameter("howmuch"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
 		room.doAddRoom(rname, rtype, howmany, howmuch);
+		return "ok";
+	}
+	@RequestMapping(value="/updateRoom",method=RequestMethod.POST,
+			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
+	@ResponseBody
+	public String updateRoom(HttpServletRequest hsr) {
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		room.doUpdateRoom(Integer.parseInt(hsr.getParameter("roomcode")),
+				hsr.getParameter("roomname") , 
+				Integer.parseInt(hsr.getParameter("roomtype")), 
+				Integer.parseInt(hsr.getParameter("howmany")), 
+				Integer.parseInt(hsr.getParameter("howmuch")));
 		return "ok";
 	}
 	@RequestMapping(value="/")

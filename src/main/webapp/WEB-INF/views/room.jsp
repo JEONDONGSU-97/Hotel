@@ -73,7 +73,7 @@ $(document)
 	$.post("http://localhost:8080/getRoomList",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
 		$.each(result,function(ndx,value){
-			str='<option value="'+value['roomcode']+'">'+value['roomname']+','+
+			str='<option value="'+value['roomcode']+' '+value['roomtype']+'">'+value['roomname']+','+
 			value['typename']+','+value['howmany']+','+value['howmuch']+'</option>';
 			$('#room_list').append(str)
 			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
@@ -86,7 +86,7 @@ $(document)
 	var str = $('#room_list option:selected').text(); // option 값 가져오기
 	var str1 = $('#room_list').val(); // value에서 typecode 가져오기
 	var pk = String(str1).split(" "); // typecode를 가져오기 위해 split
-	var typecode = parseInt(pk[0]); // int로 타입변환
+	var typecode = parseInt(pk[1]); // int로 타입변환
 	var room = String(str).split(','); // option에서 가져온 값들 배열로 슬라이싱
 	
 	var roomname = room[0]
@@ -128,21 +128,34 @@ $(document)
 })
 .on('click','#btnAdd',function(){
 	let roomname = String($('#room_name').val());
-	let roomtype = String($('#room_list').val());
+	let roomtype = String($('#room_type').val());
 	let howmany = String($('#number_of_capacity').val());
 	let howmuch = String($('#one_night_rate_room').val());
+	// alert(roomname+', '+roomtype+', '+howmany+", "+howmuch)
 	// validation (유효성검사)
 	if( roomname=='' || roomtype == '' || howmany == '' || howmuch == '') {
 		alert ("누락된값이 있습니다")
 		return false;
 	}
-	$.post('http://localhost:8080/addRoom',
-			{roomname:roomname,roomtype:roomtype,howmany:howmany,howmuch:howmuch},
-			function(result){
-				if(result=="ok"){
-					location.reload();
-				}
-			},'text');
+	let roomcode = $('#room_code').val();
+	if(roomcode==''){ // insert
+		$.post('http://localhost:8080/addRoom',
+				{roomname:roomname,roomtype:roomtype,howmany:howmany,howmuch:howmuch},
+				function(result){
+					if(result=="ok"){
+						location.reload();
+					}
+				},'text');	
+	} else { // update
+		$.post('http://localhost:8080/updateRoom',
+				{roomcode:roomcode,roomname:roomname,roomtype:roomtype,howmany:howmany,howmuch:howmuch},
+				function(result){
+					if(result=='ok'){
+						location.reload();
+					}
+				},'text');
+	}
+
 })
 </script>
 </html>
