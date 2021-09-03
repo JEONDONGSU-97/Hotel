@@ -59,26 +59,28 @@ public class HomeController {
 	public String check_user(HttpServletRequest hsr, Model model) {
 		String userid=hsr.getParameter("userid");
 		String passcode=hsr.getParameter("userpassword");
-		
-		// DB에서 유저확인 : 기존유저면 booking, 없으면 home으로.
-		session=hsr.getSession(); // session을 사용가능하게 만든다.(메소드 쓸때마다 1번씩 사용해야한다.)
-		session.setAttribute("loginid", userid);
-		session.setAttribute("loginpw", passcode);
-		
-		return "redirect:/booking"; // RequestMapping의 경로이름
-	}
-	@RequestMapping(value="/booking",method=RequestMethod.GET)
-	public String booking(HttpServletRequest hsr) {
-		session=hsr.getSession();
-		String loginid=(String)session.getAttribute("loginid");
-		String loginpw=(String)session.getAttribute("loginpw");
-		if(loginid.equals("jds")&&loginpw.equals("1234")) {
-			return "booking"; // JSP 파일 이름
+		iRoom member=sqlSession.getMapper(iRoom.class);
+		int n=member.doCheckUser(userid, passcode);
+		if(n>0) {
+			session=hsr.getSession();
+			session.setAttribute("loginid", userid);
+			return "redirect:/booking"; //RequestMapping 경로 이름
 		} else {
 			return "redirect:/";
 		}
-		
 	}
+	@RequestMapping(value="/booking")
+	public String doBooking(HttpServletRequest hrs) {
+		session = hrs.getSession();
+		String loginid = (String)session.getAttribute("loginid");
+		if(loginid==null) {
+			return "redirect:/";
+		}
+		else {
+			return "booking";
+		}		
+	}
+		
 	@RequestMapping(value="/room")
 	public String room(HttpServletRequest hsr,Model model) {
 		session=hsr.getSession();
@@ -140,16 +142,16 @@ public class HomeController {
 		room.doAddRoom(rname, rtype, howmany, howmuch);
 		return "ok";
 	}
-	@RequestMapping(value="/updateRoom",method=RequestMethod.POST,
-			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
+	@RequestMapping(value="/updateRoom", method=RequestMethod.POST, produces="application/text; charset=utf8")
 	@ResponseBody
 	public String updateRoom(HttpServletRequest hsr) {
+		int roomcode = Integer.parseInt(hsr.getParameter("roomcode"));
+		String rname = hsr.getParameter("roomname");
+		int rtype = Integer.parseInt(hsr.getParameter("roomtype"));
+		int howmany = Integer.parseInt(hsr.getParameter("howmany"));
+		int howmuch = Integer.parseInt(hsr.getParameter("howmuch"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		room.doUpdateRoom(Integer.parseInt(hsr.getParameter("roomcode")),
-				hsr.getParameter("roomname") , 
-				Integer.parseInt(hsr.getParameter("roomtype")), 
-				Integer.parseInt(hsr.getParameter("howmany")), 
-				Integer.parseInt(hsr.getParameter("howmuch")));
+		room.doUpdateRoom(roomcode, rname, rtype, howmany, howmuch);
 		return "ok";
 	}
 	@RequestMapping(value="/")
@@ -164,6 +166,16 @@ public class HomeController {
 	@RequestMapping(value="/newbie")
 	public String doNew() {
 		return "newbie";
+	}
+	@RequestMapping(value="/signin",method=RequestMethod.POST,
+			produces = "application/text; charset=utf8")
+	public String doSignin(HttpServletRequest hsr) {
+		String name = hsr.getParameter("realname");
+		String loginid = hsr.getParameter("userid");
+		String passcode = hsr.getParameter("passcode1"); 
+		iRoom signUser  = sqlSession.getMapper(iRoom.class);		
+		signUser.doSignin(name, loginid, passcode);
+		return "redirect:/";
 	}
 	@RequestMapping(value="/newinfo",method=RequestMethod.POST)
 	public String doNewInfo(@RequestParam("realname") String name,

@@ -66,14 +66,14 @@
     </footer>
   </div> 
 </body>
-<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script>
 $(document)
 .ready(function(){
 	$.post("http://localhost:8080/getRoomList",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
 		$.each(result,function(ndx,value){
-			str='<option value="'+value['roomcode']+' '+value['roomtype']+'">'+value['roomname']+','+
+			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
 			value['typename']+','+value['howmany']+','+value['howmuch']+'</option>';
 			$('#room_list').append(str)
 			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
@@ -107,7 +107,7 @@ $(document)
 	}else if(typecode==4){
 		$('#room_type').val(4).prop("selected", true);
 	}
-	let code = $(this).val();
+	let code = parseInt(pk[0]);
 	$('#room_code').val(code);
 	return false;
 })
@@ -137,7 +137,7 @@ $(document)
 		alert ("누락된값이 있습니다")
 		return false;
 	}
-	let roomcode = $('#room_code').val();
+	let roomcode = String($('#room_code').val());
 	if(roomcode==''){ // insert
 		$.post('http://localhost:8080/addRoom',
 				{roomname:roomname,roomtype:roomtype,howmany:howmany,howmuch:howmuch},
@@ -147,11 +147,17 @@ $(document)
 					}
 				},'text');	
 	} else { // update
+		console.log('roomname ['+roomname+']');
+		console.log('roomtype ['+roomtype+']');
+		console.log('howmany ['+howmany+']');
+		console.log('howmuch ['+howmuch+']');
+		console.log('roomcode ['+roomcode+']');
 		$.post('http://localhost:8080/updateRoom',
-				{roomcode:roomcode,roomname:roomname,roomtype:roomtype,howmany:howmany,howmuch:howmuch},
+				{roomcode:roomcode,roomname:roomname,
+				roomtype:roomtype,howmany:howmany,howmuch:howmuch},
 				function(result){
-					if(result=='ok'){
-						location.reload();
+					if(result=="ok"){
+						location.reload(); 
 					}
 				},'text');
 	}
