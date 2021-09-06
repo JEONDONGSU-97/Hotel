@@ -56,7 +56,7 @@ public class HomeController {
 		return "home";
 	}
 	@RequestMapping(value="/check_user",method=RequestMethod.POST)
-	public String check_user(HttpServletRequest hsr, Model model) {
+	public String check_user(HttpServletRequest hsr) {
 		String userid=hsr.getParameter("userid");
 		String passcode=hsr.getParameter("userpassword");
 		iRoom member=sqlSession.getMapper(iRoom.class);
@@ -92,7 +92,7 @@ public class HomeController {
 		ArrayList<Roominfo> roominfo = room.getRoomList();
 		model.addAttribute("list", roominfo);
 		ArrayList<Roomtype> roomtype = room.getRoomType();
-		model.addAttribute("roomtype", roomtype);		
+		model.addAttribute("roomtype", roomtype);
 		return "room";			
 	}
 	@RequestMapping(value="/logout")
@@ -121,6 +121,49 @@ public class HomeController {
 		}
 		return ja.toString();
 	}
+	@RequestMapping(value="/getRoomView",method=RequestMethod.POST,
+			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
+	@ResponseBody
+	public String getRoomView(HttpServletRequest hsr) {
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		ArrayList<Roomview> roomview = room.getRoomView();
+		// 찾아진 데이터로 JSONArray만들기
+		JSONArray ja = new JSONArray();
+		for(int i=0;i<roomview.size();i++) {
+			JSONObject jo = new JSONObject();
+			jo.put("roomcode", roomview.get(i).getRoomcode());
+			jo.put("typecode", roomview.get(i).getTypecode());
+			jo.put("roomname", roomview.get(i).getRoomname());
+			jo.put("typename", roomview.get(i).getTypename());
+			jo.put("checkin", roomview.get(i).getCheckin());
+			jo.put("checkout", roomview.get(i).getCheckout());
+			jo.put("person", roomview.get(i).getPerson());
+			jo.put("name", roomview.get(i).getName());
+			jo.put("mobile", roomview.get(i).getMobile());
+			ja.add(jo);
+		}
+		return ja.toString();
+	}
+//	@RequestMapping(value="/getRoomBook",method=RequestMethod.POST,
+//			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
+//	@ResponseBody
+//	public String getRoomBook(HttpServletRequest hsr) {
+//		iRoom room = sqlSession.getMapper(iRoom.class);
+//		ArrayList<Roombook> roombook = room.getRoomBook();
+//		// 찾아진 데이터로 JSONArray만들기
+//		JSONArray ja = new JSONArray();
+//		for(int i=0;i<roombook.size();i++) {
+//			JSONObject jo = new JSONObject();
+//			jo.put("roomcode", roombook.get(i).getRoomcode());
+//			jo.put("roomname", roombook.get(i).getRoomname());
+//			jo.put("typename", roombook.get(i).getTypename());
+//			jo.put("howmany", roombook.get(i).getHowmany());
+//			jo.put("howmuch", roombook.get(i).getHowmuch());
+//			jo.put("typecode", roombook.get(i).getTypecode());
+//			ja.add(jo);
+//		}
+//		return ja.toString();
+//	}
 	@RequestMapping(value="/deleteRoom",method=RequestMethod.POST,
 			produces = "application/text; charset=utf8")
 	@ResponseBody
@@ -152,6 +195,20 @@ public class HomeController {
 		int howmuch = Integer.parseInt(hsr.getParameter("howmuch"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
 		room.doUpdateRoom(roomcode, rname, rtype, howmany, howmuch);
+		return "ok";
+	}
+	@RequestMapping(value="/addBooking", method=RequestMethod.POST, produces="application/text; charset=utf8")
+	@ResponseBody
+	public String addBooking(HttpServletRequest hsr) {
+		int roomcode = Integer.parseInt(hsr.getParameter("roomcode"));
+		int price = Integer.parseInt(hsr.getParameter("price"));
+		int person = Integer.parseInt(hsr.getParameter("person"));
+		String checkin = hsr.getParameter("checkin");
+		String checkout = hsr.getParameter("checkout");
+		String name = hsr.getParameter("name");
+		String mobile = hsr.getParameter("mobile");
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		room.doAddBooking(roomcode, checkin, checkout, person, price, name, mobile);
 		return "ok";
 	}
 	@RequestMapping(value="/")

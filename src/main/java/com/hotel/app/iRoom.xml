@@ -12,6 +12,12 @@
       from room a, roomtype b
       where a.type=b.typecode order by roomname
    </select>
+   <select id="getRoomView" resultType="com.hotel.app.Roomview">
+     select a.roomcode, b.typecode, a.name roomname, b.name typename, to_char(c.checkin, 'YYYY-MM-DD') checkin, to_char(c.checkout, 'YYYY-MM-DD') checkout, c.person, c.name, c.mobile
+	 from room a, roomtype b, booking c
+	 where a.type=b.typecode and a.roomcode=c.roomcode
+	 order by roomname	
+   </select>
    <select id="getRoomType" resultType="com.hotel.app.Roomtype">
       select typecode,name from roomtype order by typecode
    </select>
@@ -35,4 +41,17 @@
    <select id="doCheckUser" resultType="int">
       select count(*) from member where loginid=#{param1} and passcode=#{param2}
    </select>
+	<insert id="doAddBooking">
+	  insert into booking(bookcode, roomcode, checkin, checkout, person, price, name, mobile)
+      values(
+         seq_book.nextval,
+         #{param1},
+         #{param2},
+         #{param3},
+         #{param4},
+         #{param5},
+         #{param6},
+         #{param7}
+      )
+	</insert>
 </mapper>
