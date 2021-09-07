@@ -25,7 +25,7 @@
           
           <p>
             <h3>객실분류</h3>
-            <select size=4 name="room_sort" id="room_sort">
+            <select name="room_sort" id="room_sort">
             	<option value=1>Suite Room</option>
             	<option value=2>Family Room</option>
             	<option value=3>Double Room</option>
@@ -46,25 +46,25 @@
       <div id="hotel_reservation_center">
         <section class="reservation3">
           <h3>객실이름</h3>
-          <input type="text" id="customer_room_name">
+          <input type="text" id="customer_room_name" readonly>
           <h3>객실종류</h3>
-          <input type="text" id="customer_room_type">
+          <input type="text" id="customer_room_type" readonly>
           <h3>예약기간</h3>
-          <input type="date" id="customer_accommodation_period1">  ~  <input type="date" id="customer_accommodation_period2">
+          <input type="date" id="customer_accommodation_period1" required>  ~  <input type="date" id="customer_accommodation_period2" required>
           <h3>예약인원</h3>
-          <input type="number" id="reservation_personnel">
+          <input type="number" id="reservation_personnel" required>
           <h3>숙박인원</h3>
-          <input type="text" id="accommodation_personnel">
+          <input type="text" id="accommodation_personnel" required>
           <h3>예약자명</h3>
-          <input type="text" id="customer_name" size="15px">
+          <input type="text" id="customer_name" size="15px" required>
           <h3>총 숙박비</h3>
-          <input type="text" id="all_accommodation_cost" size="15px">원
+          <input type="text" id="all_accommodation_cost" size="15px" required>원
           <h3>예약자 모바일</h3>
-          <input type="text" id="customer_mobile">
+          <input type="text" id="customer_mobile" required>
           <p>
-            <input type="submit" value="등록" id="reservation_registration">
-            <input type="submit" value="취소" id="reservation_cancel">
-            <input type="submit" value="clear" id="reservation_empty">
+            <input type="submit" value="예약완료" id="reservation_registration">
+            <input type="submit" value="예약취소" id="reservation_cancel">
+            <input type="submit" value="비우기" id="reservation_empty">
           </p>
         </section>
       </div>  
@@ -73,7 +73,7 @@
         <section class="reservation4">
           <h3>예약된 객실</h3>
             <p>
-              <select name="" id="reserved_rooms" size="30" style="width: 300px; height: 500px;">
+              <select name="" id="reserved_rooms" size="30" style="width: 300px; height: 500px; overflow: scroll;">
 
               </select>
             </p>
@@ -89,7 +89,7 @@
 <script>
 $(document)
 .ready(function(){
-	$.post("http://localhost:8080/getRoomList",{},function(result){
+	/* $.post("http://localhost:8080/getRoomList",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
 		$.each(result,function(ndx,value){
 			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
@@ -99,7 +99,7 @@ $(document)
 			//`${value['howmany']},${value['howmuch']}</option>`;
 			//<option value="2">백두산,Suite Room,8,500000</option>
 		});			
-	},'json');
+	},'json'); */
 	$.post("http://localhost:8080/getRoomView",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
 		$.each(result,function(ndx,value){
@@ -113,7 +113,42 @@ $(document)
 		});			
 	},'json');
 })
-
+.on('click','#room_search',function(){
+	$('#customer_accommodation_period1').val($('#checkin1').val());
+	$('#customer_accommodation_period2').val($('#checkout1').val());
+	$.post("http://localhost:8080/getRoomList",{},function(result){
+		console.log(result);//result는 제이슨 데이터를 받기위함.
+		$.each(result,function(ndx,value){
+			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
+			value['typename']+','+value['howmany']+','+value['howmuch']+'</option>';
+			$('#available_room_list').append(str)
+			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
+			//`${value['howmany']},${value['howmuch']}</option>`;
+			//<option value="2">백두산,Suite Room,8,500000</option>
+		});			
+	},'json');
+})
+.on('click','#reservation_empty',function(){
+	$('#roomcode,#customer_room_name,#customer_room_type,#customer_accommodation_period1,#customer_accommodation_period2,#reservation_personnel,#accommodation_personnel,#customer_name,#all_accommodation_cost,#customer_mobile').val('');
+})
+.on('change','#checkin1,#checkout1',function(){
+	var str = $('#available_room_list option:selected').text();
+	var room = String(str).split(',');
+	let checkin = $('#checkin1').val();
+	let checkout = $('#checkout1').val();
+	if(checkin == '' || checkout == '' ) return false;
+	checkin = new Date(checkin);
+	checkout = new Date(checkout);
+	if(checkin > checkout){
+		alert('체크인날짜가 체크아웃보다 나중일 수 없습니다.');
+		return false;
+	}
+	let ms = Math.abs(checkout-checkin);
+	let days = Math.ceil(ms/(1000*60*60*24));
+	let total = days*parseInt(room[3]);
+	$('#all_accommodation_cost').val(total);
+	return false;
+})
 .on('click','#available_room_list',function(){
 	var str = $('#available_room_list option:selected').text(); // option 값 가져오기
 	var str1 = $('#available_room_list').val(); // value에서 typecode 가져오기
@@ -126,7 +161,7 @@ $(document)
 	var howmany = room[2]
 	var howmuch = room[3]
 	
-	if(typecode==1){
+/* 	if(typecode==1){
 		$('#room_sort').val(1).prop("selected", true);
 	}else if(typecode==2){
 		$('#room_sort').val(2).prop("selected", true);
@@ -134,17 +169,17 @@ $(document)
 		$('#room_sort').val(3).prop("selected", true);
 	}else if(typecode==4){
 		$('#room_sort').val(4).prop("selected", true);
-	}
-	
+	} */
+	/* $('#reservation_empty').trigger('click'); */
 	$('#customer_room_name').val(roomname); // input은 value로 화면출력
 	$('#customer_room_type').val(roomtype);
 	$('#accommodation_personnel').val(howmany);	
-	
 	let code = parseInt(pk[0]);
 	$('#room_code').val(code);
+
 	return false;
 })
-.on('blur','#customer_accommodation_period2',function(){
+/* .on('blur','#customer_accommodation_period2',function(){
 	var str = $('#available_room_list option:selected').text();
 	var checkin = String($('#customer_accommodation_period1').val());
     var checkout = String($('#customer_accommodation_period2').val());
@@ -154,7 +189,7 @@ $(document)
     p=parseInt(p[2]);
     p1=parseInt(p1[2]);
     $('#all_accommodation_cost').val((p1-p)*parseInt(room[3]));
-})
+}) */
 .on('click','#reservation_registration',function(){
 	let roomcode = String($('#room_code').val());
 	let price = String($('#all_accommodation_cost').val());
