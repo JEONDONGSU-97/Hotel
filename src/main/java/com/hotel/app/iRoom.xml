@@ -8,15 +8,30 @@
    <select id="getRoomList" resultType="com.hotel.app.Roominfo">
 <!--    select id = "인터페이스의 메소드" resultType = 인터페이스의 반환 데이터 타입
       select roomcode,name,type,howmany,howmuch from room order by name -->
-      select a.roomcode, a.name roomname, b.name typename, a.howmany, a.howmuch, b.typecode
-      from room a, roomtype b
-      where a.type=b.typecode order by roomname
+      select roomcode, name roomname, 
+      (select name from roomtype where typecode=#{param3}) as typename,
+      howmany, howmuch
+      from room 
+      where type=#{param3} and roomcode not in(
+      select roomcode from room
+      INTERSECT
+      select roomcode from booking where (checkin between #{param1} and to_date(#{param2})-1) 
+      or (checkout between to_date(#{param1})+1 and to_date(#{param2})) 
+      or <![CDATA[(checkin<#{param1} and checkout>to_date(#{param2})-1))]]>
    </select>
    <select id="getRoomView" resultType="com.hotel.app.Roomview">
-     select a.roomcode, b.typecode, a.name roomname, b.name typename, to_char(c.checkin, 'YYYY-MM-DD') checkin, to_char(c.checkout, 'YYYY-MM-DD') checkout, c.person, c.name, c.mobile
-	 from room a, roomtype b, booking c
-	 where a.type=b.typecode and a.roomcode=c.roomcode
-	 order by roomname	
+    select a.bookcode, to_char(a.checkin,'YYYY-MM-DD') as checkin,
+    to_char(a.checkout, 'YYYY-MM-DD') as checkout, a.mobile, a.name,
+    a.price, a.person, a.roomcode, b.name roomname, c.name typename 
+    from booking a, room b, roomtype c
+    where a.roomcode = b.roomcode and b.type=c.typecode and b.type=#{param3}
+    and a.checkin between #{param1} and #{param2} and a.checkout between #{param1} and #{param2} 	
+   </select>
+   <select id="getRoomView1" resultType="com.hotel.app.Roominfo">
+    select a.roomcode, a.name roomname, b.name typename, a.howmany, a.howmuch, b.typecode
+    from room a, roomtype b 
+    where a.type=b.typecode 
+    order by roomname	
    </select>
    <select id="getRoomType" resultType="com.hotel.app.Roomtype">
       select typecode,name from roomtype order by typecode
@@ -24,6 +39,9 @@
    <!-- xml에서  sql문 뒤에 ; 붙이면 오류남-->
    <delete id="doDeleteRoom">
       delete from room where roomcode=#{roomcode}
+   </delete>
+   <delete id="doDeleteReserved">
+   		delete from booking where roomcode=#{roomcode}
    </delete>
    <insert id="doAddRoom">
    <!-- DB에 적힌 스키마랑 똑같이 요소를 적어줘야 insert가 된다. -->

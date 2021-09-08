@@ -89,7 +89,7 @@ public class HomeController {
 		}
 		// 여기서 interface호출하고 결과를 room.jsp에 전달.
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		ArrayList<Roominfo> roominfo = room.getRoomList();
+		ArrayList<Roominfo> roominfo = room.getRoomView1();
 		model.addAttribute("list", roominfo);
 		ArrayList<Roomtype> roomtype = room.getRoomType();
 		model.addAttribute("roomtype", roomtype);
@@ -106,7 +106,10 @@ public class HomeController {
 	@ResponseBody
 	public String getRoomList(HttpServletRequest hsr) {
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		ArrayList<Roominfo> roominfo = room.getRoomList();
+		String checkin = hsr.getParameter("checkin");
+		String checkout = hsr.getParameter("checkout");
+		int typecode = Integer.parseInt(hsr.getParameter("typecode"));
+		ArrayList<Roominfo> roominfo = room.getRoomList(checkin,checkout,typecode);
 		// 찾아진 데이터로 JSONArray만들기
 		JSONArray ja = new JSONArray();
 		for(int i=0;i<roominfo.size();i++) {
@@ -126,7 +129,10 @@ public class HomeController {
 	@ResponseBody
 	public String getRoomView(HttpServletRequest hsr) {
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		ArrayList<Roomview> roomview = room.getRoomView();
+		String checkin = hsr.getParameter("checkin");
+		String checkout = hsr.getParameter("checkout");
+		int typecode = Integer.parseInt(hsr.getParameter("typecode"));
+		ArrayList<Roomview> roomview = room.getRoomView(checkin,checkout,typecode);
 		// 찾아진 데이터로 JSONArray만들기
 		JSONArray ja = new JSONArray();
 		for(int i=0;i<roomview.size();i++) {
@@ -144,6 +150,27 @@ public class HomeController {
 		}
 		return ja.toString();
 	}
+	@RequestMapping(value="/getRoomView1",method=RequestMethod.POST,
+			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
+	@ResponseBody
+	public String getRoomView1() {
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		ArrayList<Roominfo> roominfo = room.getRoomView1();
+		// 찾아진 데이터로 JSONArray만들기
+		JSONArray ja = new JSONArray();
+		for(int i=0;i<roominfo.size();i++) {
+			JSONObject jo = new JSONObject();
+			jo.put("roomcode", roominfo.get(i).getRoomcode());
+			jo.put("typecode", roominfo.get(i).getTypecode());
+			jo.put("roomname", roominfo.get(i).getRoomname());
+			jo.put("typename", roominfo.get(i).getTypename());
+			jo.put("howmany", roominfo.get(i).getHowmany());
+			jo.put("howmuch", roominfo.get(i).getHowmuch());
+			ja.add(jo);
+		}
+		return ja.toString();
+	}
+	
 //	@RequestMapping(value="/getRoomBook",method=RequestMethod.POST,
 //			produces = "application/text; charset=utf8")//이게 있어야 콘솔로그 한글 안깨짐
 //	@ResponseBody
@@ -171,6 +198,15 @@ public class HomeController {
 		int roomcode = Integer.parseInt(hsr.getParameter("roomcode"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
 		room.doDeleteRoom(roomcode);
+		return "ok";
+	}
+	@RequestMapping(value="/deleteReserved",method=RequestMethod.POST,
+			produces = "application/text; charset=utf8")
+	@ResponseBody
+	public String deleteReserved(HttpServletRequest hsr) {
+		int roomcode = Integer.parseInt(hsr.getParameter("roomcode"));
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		room.doDeleteReserved(roomcode);
 		return "ok";
 	}
 	@RequestMapping(value="/addRoom",method=RequestMethod.POST,

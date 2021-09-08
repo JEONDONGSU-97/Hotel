@@ -100,8 +100,82 @@ $(document)
 			//<option value="2">백두산,Suite Room,8,500000</option>
 		});			
 	},'json'); */
-	$.post("http://localhost:8080/getRoomView",{},function(result){
+	/* $.post("http://localhost:8080/getRoomView",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
+		$.each(result,function(ndx,value){
+			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
+			value['typename']+','+value['checkin']+','+value['checkout']+','+
+			value['person']+','+value['name']+','+value['mobile']+'</option>';
+			$('#reserved_rooms').append(str)
+			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
+			//`${value['howmany']},${value['howmuch']}</option>`;
+			//<option value="2">백두산,Suite Room,8,500000</option>
+		});			
+	},'json'); */
+})
+.on('click','#reservation_cancel',function(){
+	$.post('http://localhost:8080/deleteReserved',{roomcode:$('#room_code').val()},
+			function(result){
+		console.log(result);
+		if(result=="ok"){
+			$('#reservation_empty').trigger('click'); // 입력란 비우기
+			$('#reserved_rooms option:selected').remove(); // room리스트에서 제거.
+		}
+	},'text');
+	return false;
+})
+.on('click','#reserved_rooms',function(){
+	var str = $('#reserved_rooms option:selected').text(); // option 값 가져오기
+	var str1 = $('#reserved_rooms').val(); // value에서 typecode 가져오기
+	var pk = String(str1).split(" "); // typecode를 가져오기 위해 split
+	var typecode = parseInt(pk[1]); // int로 타입변환
+	var room = String(str).split(','); // option에서 가져온 값들 배열로 슬라이싱
+	
+	var roomname = room[0]
+	var roomtype = room[1]
+	var checkin = room[2]
+	var checkout = room[3]
+	var person = room[4]
+	var name = room[5]
+	var mobile = room[6]
+	$('#customer_room_name').val(roomname); // input은 value로 화면출력
+	$('#customer_room_type').val(roomtype);
+	$('#customer_accommodation_period1').val(checkin);
+	$('#customer_accommodation_period2').val(checkout);
+	$('#reservation_personnel').val(person);
+	$('#customer_name').val(name);
+	$('#customer_mobile').val(mobile);
+	/* $('#accommodation_personnel').val(); */	
+	let code = parseInt(pk[0]);
+	$('#room_code').val(code);
+	console.log($('#room_code').val());
+})
+.on('click','#room_search',function(){
+	$('#customer_accommodation_period1').val($('#checkin1').val());
+	$('#customer_accommodation_period2').val($('#checkout1').val());
+	var checkin = $('#customer_accommodation_period1').val();
+	var checkout = $('#customer_accommodation_period2').val();
+	var typecode = $('#room_sort option:selected').val();
+	console.log(checkin,checkout,typecode);
+	$.post("http://localhost:8080/getRoomList",
+			{checkin:checkin,checkout:checkout,typecode:typecode},
+			function(result){
+		console.log(result);//result는 제이슨 데이터를 받기위함.
+		$('#available_room_list').empty();
+		$.each(result,function(ndx,value){
+			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
+			value['typename']+','+value['howmany']+','+value['howmuch']+'</option>';
+			$('#available_room_list').append(str)
+			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
+			//`${value['howmany']},${value['howmuch']}</option>`;
+			//<option value="2">백두산,Suite Room,8,500000</option>
+		});			
+	},'json');
+	$.post("http://localhost:8080/getRoomView",
+			{checkin:checkin,checkout:checkout,typecode:typecode},
+			function(result){
+		console.log(result);//result는 제이슨 데이터를 받기위함.
+		$('#reserved_rooms').empty();
 		$.each(result,function(ndx,value){
 			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
 			value['typename']+','+value['checkin']+','+value['checkout']+','+
@@ -113,27 +187,10 @@ $(document)
 		});			
 	},'json');
 })
-.on('click','#room_search',function(){
-	$('#customer_accommodation_period1').val($('#checkin1').val());
-	$('#customer_accommodation_period2').val($('#checkout1').val());
-	$.post("http://localhost:8080/getRoomList",{},function(result){
-		console.log(result);//result는 제이슨 데이터를 받기위함.
-		$.each(result,function(ndx,value){
-			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
-			value['typename']+','+value['howmany']+','+value['howmuch']+'</option>';
-			$('#available_room_list').append(str)
-			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
-			//`${value['howmany']},${value['howmuch']}</option>`;
-			//<option value="2">백두산,Suite Room,8,500000</option>
-		});			
-	},'json');
-})
 .on('click','#reservation_empty',function(){
 	$('#roomcode,#customer_room_name,#customer_room_type,#customer_accommodation_period1,#customer_accommodation_period2,#reservation_personnel,#accommodation_personnel,#customer_name,#all_accommodation_cost,#customer_mobile').val('');
 })
 .on('change','#checkin1,#checkout1',function(){
-	var str = $('#available_room_list option:selected').text();
-	var room = String(str).split(',');
 	let checkin = $('#checkin1').val();
 	let checkout = $('#checkout1').val();
 	if(checkin == '' || checkout == '' ) return false;
@@ -143,11 +200,7 @@ $(document)
 		alert('체크인날짜가 체크아웃보다 나중일 수 없습니다.');
 		return false;
 	}
-	let ms = Math.abs(checkout-checkin);
-	let days = Math.ceil(ms/(1000*60*60*24));
-	let total = days*parseInt(room[3]);
-	$('#all_accommodation_cost').val(total);
-	return false;
+
 })
 .on('click','#available_room_list',function(){
 	var str = $('#available_room_list option:selected').text(); // option 값 가져오기
@@ -176,8 +229,15 @@ $(document)
 	$('#accommodation_personnel').val(howmany);	
 	let code = parseInt(pk[0]);
 	$('#room_code').val(code);
-
-	return false;
+	let checkin = $('#checkin1').val();
+	let checkout = $('#checkout1').val();
+	checkin = new Date(checkin);
+	checkout = new Date(checkout);
+	let ms = Math.abs(checkout-checkin);
+	let days = Math.ceil(ms/(1000*60*60*24));
+	let total = days*parseInt(room[3]);
+	$('#all_accommodation_cost').val(total);
+	console.log(days,room[3],ms);
 })
 /* .on('blur','#customer_accommodation_period2',function(){
 	var str = $('#available_room_list option:selected').text();
@@ -207,7 +267,10 @@ $(document)
 		$.post('http://localhost:8080/addBooking',
 				{roomcode:roomcode,price:price,person:person,checkin:checkin,checkout:checkout,name:name,mobile:mobile},function(result){
 					if(result=="ok"){
-						location.reload();
+						$('#reservation_empty').trigger('click');
+						/* location.reload(); */
+						$('#room_search').trigger('click');
+						
 					}
 				},'text');
 		console.log(roomcode,price,person,checkin,checkout,name,mobile);

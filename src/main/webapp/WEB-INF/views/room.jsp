@@ -70,7 +70,7 @@
 <script>
 $(document)
 .ready(function(){
-	$.post("http://localhost:8080/getRoomList",{},function(result){
+ 	$.post("http://localhost:8080/getRoomView1",{},function(result){
 		console.log(result);//result는 제이슨 데이터를 받기위함.
 		$.each(result,function(ndx,value){
 			str='<option value="'+value['roomcode']+' '+value['typecode']+'">'+value['roomname']+','+
@@ -81,6 +81,7 @@ $(document)
 			//<option value="2">백두산,Suite Room,8,500000</option>
 		});			
 	},'json');
+	console.log($('#room_list').val()); 
 })
 .on('click','#room_list',function(){
 	var str = $('#room_list option:selected').text(); // option 값 가져오기
