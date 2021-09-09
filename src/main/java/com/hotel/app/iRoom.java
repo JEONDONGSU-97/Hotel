@@ -9,8 +9,9 @@ public interface iRoom {
 	ArrayList<Roomview> getRoomView(String checkin, String checkout, int typecode);
 	ArrayList<Roominfo> getRoomView1();
 	void doDeleteRoom(int roomcode);
-	void doDeleteReserved(int roomcode);
+	void doDeleteReserved(int bookcode);
 	void doAddRoom(String roomname, int roomtype, int howmany, int howmuch);
+	void doUpdateReserved(int bookcode,int person, String name, String mobile);
 	void doUpdateRoom(int roomcode, String roomname, int roomtype, int howmany, int howmuch);
 	void doSignin(String name, String loginid, String passcode);
 	int doCheckUser(String userid, String passcode);

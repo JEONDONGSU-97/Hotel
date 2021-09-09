@@ -89,8 +89,8 @@ public class HomeController {
 		}
 		// 여기서 interface호출하고 결과를 room.jsp에 전달.
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		ArrayList<Roominfo> roominfo = room.getRoomView1();
-		model.addAttribute("list", roominfo);
+//		ArrayList<Roominfo> roominfo = room.getRoomView1();
+//		model.addAttribute("list", roominfo);
 		ArrayList<Roomtype> roomtype = room.getRoomType();
 		model.addAttribute("roomtype", roomtype);
 		return "room";			
@@ -133,10 +133,12 @@ public class HomeController {
 		String checkout = hsr.getParameter("checkout");
 		int typecode = Integer.parseInt(hsr.getParameter("typecode"));
 		ArrayList<Roomview> roomview = room.getRoomView(checkin,checkout,typecode);
+
 		// 찾아진 데이터로 JSONArray만들기
 		JSONArray ja = new JSONArray();
 		for(int i=0;i<roomview.size();i++) {
 			JSONObject jo = new JSONObject();
+			jo.put("bookcode", roomview.get(i).getBookcode());
 			jo.put("roomcode", roomview.get(i).getRoomcode());
 			jo.put("typecode", roomview.get(i).getTypecode());
 			jo.put("roomname", roomview.get(i).getRoomname());
@@ -146,6 +148,8 @@ public class HomeController {
 			jo.put("person", roomview.get(i).getPerson());
 			jo.put("name", roomview.get(i).getName());
 			jo.put("mobile", roomview.get(i).getMobile());
+			jo.put("howmany", roomview.get(i).getHowmany());
+			jo.put("price", roomview.get(i).getPrice());
 			ja.add(jo);
 		}
 		return ja.toString();
@@ -204,9 +208,9 @@ public class HomeController {
 			produces = "application/text; charset=utf8")
 	@ResponseBody
 	public String deleteReserved(HttpServletRequest hsr) {
-		int roomcode = Integer.parseInt(hsr.getParameter("roomcode"));
+		int bookcode = Integer.parseInt(hsr.getParameter("bookcode"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
-		room.doDeleteReserved(roomcode);
+		room.doDeleteReserved(bookcode);
 		return "ok";
 	}
 	@RequestMapping(value="/addRoom",method=RequestMethod.POST,
@@ -231,6 +235,17 @@ public class HomeController {
 		int howmuch = Integer.parseInt(hsr.getParameter("howmuch"));
 		iRoom room = sqlSession.getMapper(iRoom.class);
 		room.doUpdateRoom(roomcode, rname, rtype, howmany, howmuch);
+		return "ok";
+	}
+	@RequestMapping(value="/updateReserved", method=RequestMethod.POST, produces="application/text; charset=utf8")
+	@ResponseBody
+	public String updateReserved(HttpServletRequest hsr) {
+		int bookcode = Integer.parseInt(hsr.getParameter("bookcode"));
+		int person = Integer.parseInt(hsr.getParameter("person"));
+		String name = hsr.getParameter("name");
+		String mobile = hsr.getParameter("mobile");
+		iRoom room = sqlSession.getMapper(iRoom.class);
+		room.doUpdateReserved(bookcode,person,name,mobile);
 		return "ok";
 	}
 	@RequestMapping(value="/addBooking", method=RequestMethod.POST, produces="application/text; charset=utf8")

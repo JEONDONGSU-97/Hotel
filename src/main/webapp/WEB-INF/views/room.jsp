@@ -78,10 +78,9 @@ $(document)
 			$('#room_list').append(str)
 			//str=`<option value="${value['roomcdoe']}">${value['roomname']},${value['typename']},`+
 			//`${value['howmany']},${value['howmuch']}</option>`;
-			//<option value="2">백두산,Suite Room,8,500000</option>
+			//<option value="2">백두산,Suite Room,8,500000</option> 
 		});			
 	},'json');
-	console.log($('#room_list').val()); 
 })
 .on('click','#room_list',function(){
 	var str = $('#room_list option:selected').text(); // option 값 가져오기
@@ -110,6 +109,7 @@ $(document)
 	}
 	let code = parseInt(pk[0]);
 	$('#room_code').val(code);
+	console.log($('#room_code').val());
 	return false;
 })
 .on('click','#btnEmpty',function(){

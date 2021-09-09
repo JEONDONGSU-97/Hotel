@@ -22,7 +22,7 @@
    <select id="getRoomView" resultType="com.hotel.app.Roomview">
     select a.bookcode, to_char(a.checkin,'YYYY-MM-DD') as checkin,
     to_char(a.checkout, 'YYYY-MM-DD') as checkout, a.mobile, a.name,
-    a.price, a.person, a.roomcode, b.name roomname, c.name typename 
+    a.person, a.roomcode, b.name roomname, c.name typename, b.howmany, a.price
     from booking a, room b, roomtype c
     where a.roomcode = b.roomcode and b.type=c.typecode and b.type=#{param3}
     and a.checkin between #{param1} and #{param2} and a.checkout between #{param1} and #{param2} 	
@@ -41,7 +41,7 @@
       delete from room where roomcode=#{roomcode}
    </delete>
    <delete id="doDeleteReserved">
-   		delete from booking where roomcode=#{roomcode}
+   		delete from booking where bookcode=#{bookcode}
    </delete>
    <insert id="doAddRoom">
    <!-- DB에 적힌 스키마랑 똑같이 요소를 적어줘야 insert가 된다. -->
@@ -51,6 +51,10 @@
    <update id="doUpdateRoom">
       update room set name=#{param2},type=#{param3},howmany=#{param4},howmuch=#{param5}
       where roomcode=#{param1}
+   </update>
+   <update id="doUpdateReserved">
+      update booking set person=#{param2},name=#{param3},mobile=#{param4}
+      where bookcode=#{param1}
    </update>
    <insert id="doSignin">
    	  insert into member(name,loginid,passcode)
