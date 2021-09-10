@@ -1,8 +1,16 @@
 @charset "UTF-8";
 body{
-	position: fiexd;
+	
 }
-
+header {
+  width: 100%;
+  top: 0;
+  z-index: 9;
+  background-color: #F6F5F0;
+  border-bottom: 1px solid #c8c8c8;
+  text-align: center;
+  line-height: 1.4;
+}
 #hotel_room_all{
     width: 100%;
     height: 300px;
@@ -37,9 +45,9 @@ body{
 }
 
 #hotel_reservation_all{
-  width: 100%;
-  height: 300px;
-  text-align: center;
+  width: 1100px;
+  margin: 0 auto;
+  position: relative;
 }
 
 #hotel_reservation_left{
@@ -48,12 +56,16 @@ body{
   box-sizing: border-box;
   text-align: center;
   padding-right: 100px;
+  
+  position: relative;
 }
 #hotel_reservation_center{
   width: 30%;
   float: left;
   box-sizing: border-box;
   text-align: center;
+  
+  position: relative;
 }
 #hotel_reservation_right{
   width: 35%;
@@ -61,6 +73,8 @@ body{
   box-sizing: border-box;
   text-align: center;
   padding-left: 50px;
+  position: relative;
+ 
 }
 
 #hotel_reservation_bottom{

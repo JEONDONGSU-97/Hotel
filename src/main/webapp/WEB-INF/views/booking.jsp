@@ -11,6 +11,7 @@
 <body>
 	<div id="hotel_reservation_all">
     <header>
+      <h1>Hotel</h1>
       <a href="/logout">로그아웃</a>
       <p>예약관리</p>
       <a href="room" id="room_management">객실관리</a>
