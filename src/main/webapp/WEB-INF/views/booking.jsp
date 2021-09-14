@@ -9,13 +9,13 @@
 <link rel="stylesheet" href="resources/home/css/booking.css">
 </head>
 <body>
-	<div id="hotel_reservation_all">
-    <header>
+	<header>
       <h1>Hotel</h1>
       <a href="/logout">로그아웃</a>
       <p>예약관리</p>
       <a href="room" id="room_management">객실관리</a>
     </header>
+	<div id="hotel_reservation_all">
     <main>
       <div id="hotel_reservation_left">
         <section class="reservation1">
@@ -76,7 +76,7 @@
         <section class="reservation4">
           <h3>예약된 객실</h3>
             <p>
-              <select name="" id="reserved_rooms" size="30" style="width: 300px; height: 500px; overflow: scroll;">
+              <select name="" id="reserved_rooms" size="30" style="width: 290px; height: 500px; overflow: scroll;">
 
               </select>
             </p>
@@ -86,7 +86,7 @@
     <footer>
       
     </footer>
-  </div>
+   </div>
 </body>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script>

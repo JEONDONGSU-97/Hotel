@@ -1,15 +1,20 @@
 @charset "UTF-8";
-body{
-	
-}
 header {
-  width: 100%;
+  width: 1100px;
+  margin: 0 auto;
   top: 0;
   z-index: 9;
   background-color: #F6F5F0;
   border-bottom: 1px solid #c8c8c8;
   text-align: center;
   line-height: 1.4;
+}
+body{
+	background-image: url("../images/the-palm-962785_1280.jpg");
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+    background-size: cover; 
+    background-position: center;
 }
 #hotel_room_all{
     width: 100%;
@@ -56,16 +61,15 @@ header {
   box-sizing: border-box;
   text-align: center;
   padding-right: 100px;
-  
-  position: relative;
+  position: absoulte;
 }
+
 #hotel_reservation_center{
   width: 30%;
   float: left;
   box-sizing: border-box;
   text-align: center;
-  
-  position: relative;
+  position: absoulte;  
 }
 #hotel_reservation_right{
   width: 35%;
@@ -73,10 +77,12 @@ header {
   box-sizing: border-box;
   text-align: center;
   padding-left: 50px;
-  position: relative;
- 
+  position: absoulte;
 }
-
+#reserved_rooms {
+	margin: 0 50px 0 0;
+	position: relative;
+}
 #hotel_reservation_bottom{
   text-align: center;
   margin-bottom: 50px;
