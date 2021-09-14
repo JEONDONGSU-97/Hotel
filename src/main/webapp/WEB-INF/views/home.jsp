@@ -20,9 +20,9 @@
 	<input type=password name=userpassword placeholder="비밀번호를 입력하세요."><br>
 	<input type=submit value="로그인">
 </form>
-	<div class="actions">
-	<button value="취소" onclick="location.href='/'">취소</button>
-	<button value="회원가입" onclick="location.href='/newbie'">회원가입</button>
+	<div id="button_padding1">
+	<button id="homeBtn1" value="취소" onclick="location.href='/'">취소</button>
+	<button id="homeBtn2" value="회원가입" onclick="location.href='/newbie'">회원가입</button>
 	</div>
 </div>
 </section>

@@ -1,6 +1,6 @@
 @charset "UTF-8";
 body {
-  margin-top: 120px;
+  margin-top: 30px;
   padding: 100px 0 150px;
   background-image: url("../images/vancouver-358515_1280.jpg");
   background-repeat: no-repeat;
@@ -22,6 +22,9 @@ body {
   text-align: center;
   margin-bottom: 24px;
 }
+#frmLogin {
+	margin-bottom: 0px;
+}
 .signin__card {
   width: 500px;
   margin: 0 auto;
@@ -41,7 +44,7 @@ body {
   color: #006633;
 }
 .signin__card form {
-  padding: 30px 22px;
+  padding: 30px 22px 0;
 }
 .signin__card form input {
   width: 100%;
@@ -60,10 +63,43 @@ body {
   font-size: 20px;
   cursor: pointer;
 }
+#homeBtn1 {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  background-color: #006633;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+#homeBtn2 {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  background-color: #006633;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
 .signin__card form p {
   font-size: 12px;
   color: #006633;
   text-align: center;
+}
+#button_padding1{
+  padding: 0 22px 0;
 }
 .signin__card .actions {
   display: flex;
