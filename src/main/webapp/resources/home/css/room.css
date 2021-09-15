@@ -11,10 +11,26 @@ header {
   margin: 0 auto;
   top: 0;
   z-index: 9;
-  background-color: #F6F5F0;
   border-bottom: 1px solid #c8c8c8;
   text-align: center;
   line-height: 1.4;
+  background-color: #F6F5F0;
+  opacity: 0.5;
+}
+[type="button"]{
+	opacity: 1;
+}
+header h1,a,p{
+	color: black;
+}
+header a:hover{
+	color: green;
+}
+select, input{
+	opacity: 0.5;
+}
+h3{
+	color: white;
 }
 #hotel_room_all{
     width: 1100px;

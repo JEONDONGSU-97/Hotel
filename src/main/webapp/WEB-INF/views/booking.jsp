@@ -21,7 +21,7 @@
         <section class="reservation1">
           <p>
             <h3>예약기간</h3>
-            <input type="date" id="checkin1"> ~ <input type="date" id="checkout1">
+            <input type="date" id="checkin1">&nbsp;&nbsp; ~<input type="date" id="checkout1">
           </p>
           
           <p>
